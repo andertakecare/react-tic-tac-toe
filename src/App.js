@@ -5,10 +5,15 @@ export default function Game() {
   const [history, setHistory] = useState([Array(9).fill(null)]);
   const currentSquares = history[history.length - 1];
 
+  function handlePlay(nextSquares) {
+    setHistory((prevHistory) => [...prevHistory, nextSquares]);
+    setXIsNext(xIsNext ? false : true);
+  }
+
   return (
     <div className="game">
       <div className="game-board">
-        <Board />
+        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
       </div>
       <div className="game-info">
         <ol></ol>
@@ -17,10 +22,7 @@ export default function Game() {
   );
 }
 
-function Board() {
-  const [xIsNext, setXIsNext] = useState(true);
-  const [squares, setSquares] = useState(Array(9).fill(null));
-
+function Board({ xIsNext, squares, onPlay }) {
   function handleClick(i) {
     if (squares[i] || calculateWinner(squares)) return;
     const nextSquares = squares.slice();
@@ -29,8 +31,7 @@ function Board() {
     } else {
       nextSquares[i] = "O";
     }
-    setSquares(nextSquares);
-    setXIsNext(xIsNext ? false : true);
+    onPlay(nextSquares);
   }
 
   const winner = calculateWinner(squares);
